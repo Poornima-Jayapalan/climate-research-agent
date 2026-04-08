@@ -1,0 +1,103 @@
+import requests
+from datetime import datetime, timedelta
+
+BASE_URL = "https://eonet.gsfc.nasa.gov/api/v3/events"
+
+
+# ---------------------------
+# Core Fetch Function
+# ---------------------------
+def fetch_events(days: int = 30, status: str = "open"):
+    """
+    Fetch natural events from NASA EONET.
+
+    Args:
+        days (int): How many days back to look
+        status (str): "open" (active) or "closed"
+
+    Returns:
+        dict: Raw JSON response
+    """
+    start_date = (datetime.utcnow() - timedelta(days=days)).strftime("%Y-%m-%d")
+
+    params = {
+        "start": start_date,
+        "status": status,
+    }
+
+    response = requests.get(BASE_URL, params=params, timeout=10)
+    response.raise_for_status()
+
+    return response.json()
+
+
+# ---------------------------
+# Parse Events
+# ---------------------------
+def parse_events(data: dict):
+    """
+    Extract useful fields from EONET response.
+    """
+    events = []
+
+    for event in data.get("events", []):
+        title = event.get("title")
+        categories = [c["title"] for c in event.get("categories", [])]
+
+        geometry = event.get("geometry", [])
+        latest = geometry[-1] if geometry else {}
+
+        date = latest.get("date")
+        coords = latest.get("coordinates")
+
+        events.append({
+            "title": title,
+            "categories": categories,
+            "date": date,
+            "coordinates": coords,
+        })
+
+    return events
+
+
+# ---------------------------
+# Filter Helpers
+# ---------------------------
+def filter_by_category(events, keyword: str):
+    """
+    Filter events by category keyword (e.g., 'wildfire', 'storm')
+    """
+    keyword = keyword.lower()
+
+    return [
+        e for e in events
+        if any(keyword in c.lower() for c in e["categories"])
+    ]
+
+
+# ---------------------------
+# Format for LLM Output
+# ---------------------------
+def format_events(events, limit: int = 5):
+    """
+    Convert events into readable text for agents
+    """
+    if not events:
+        return "No significant events found."
+
+    lines = []
+
+    for e in events[:limit]:
+        date = e["date"]
+        title = e["title"]
+        cats = ", ".join(e["categories"])
+
+        lines.append(f"- {title} ({cats}) on {date}")
+
+    return "\n".join(lines)
+
+
+# ---------------------------
+# High-Level Utility
+# ---------------------------
+def get_recent_events(days: int = 30,
