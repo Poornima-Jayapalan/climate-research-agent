@@ -1,0 +1,62 @@
+# ----------------------
+# Python
+# ----------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# ----------------------
+# Virtual Environments
+# ----------------------
+env/
+venv/
+.venv/
+ENV/
+
+# ----------------------
+# Environment Variables & Secrets
+# ----------------------
+.env
+.env.*
+secrets.json
+
+# ----------------------
+# Streamlit
+# ----------------------
+.streamlit/secrets.toml
+.streamlit/cache/
+
+# ----------------------
+# Data & Outputs
+# ----------------------
+data/
+*.csv
+*.json
+
+# ----------------------
+# Logs
+# ----------------------
+logs/
+*.log
+
+# ----------------------
+# IDE / Editor Files
+# ----------------------
+.vscode/
+.idea/
+
+# ----------------------
+# OS Files
+# ----------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ----------------------
+# Testing & Coverage
+# ----------------------
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
