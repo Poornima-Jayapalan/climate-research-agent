@@ -1,4 +1,4 @@
-#  Climate Research Agent
+#  Multi-Agent Climate Research 
 
 A multi-agent AI system for climate research, powered by real-world data from NASA and Open-Meteo. Ask any climate, weather, or natural events question in plain language and get data-backed answers from a specialist AI agent.
 
